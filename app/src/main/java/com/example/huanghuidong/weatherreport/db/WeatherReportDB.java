@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.huanghuidong.weatherreport.model.City;
+import com.example.huanghuidong.weatherreport.model.County;
 import com.example.huanghuidong.weatherreport.model.Province;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class WeatherReportDB {
     public static final String DB_NAME="WeatherReport";
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 3;
     private static WeatherReportDB weatherReportDB;
     private SQLiteDatabase db;
 
@@ -56,10 +57,9 @@ public class WeatherReportDB {
             }while(cursor.moveToNext());
         }
 
-        if (cursor!=null){
+        if (cursor!= null){
             cursor.close();
         }
-
         return provinceList;
     }
 
@@ -67,13 +67,63 @@ public class WeatherReportDB {
         if (city!=null){
             ContentValues contentValues= new ContentValues();
             contentValues.put("city_name",city.getCityName());
-            contentValues.put("city_coee",city.getCityCode());
+            contentValues.put("city_code",city.getCityCode());
             contentValues.put("province_id",city.getProvinceId());
-            db.insert("City",null,contentValues);
+            db.insert("City", null, contentValues);
         }
     }
 
-//    public List<City> loadCities(int provinceId){
-//
-//    }
+    public List<City> loadCities(int provinceId){
+        List <City> cityList = new ArrayList<City>();
+        Cursor cursor = db.query("City",null,"province_id=?",new String[]{String.valueOf(provinceId)},null,null,null);
+
+        if (cursor.moveToFirst()){
+            City city = new City();
+            do {
+                city.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
+                city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
+                city.setProvinceId(provinceId);
+                cityList.add(city);
+            }while(cursor.moveToNext());
+        }
+
+        if (cursor!= null){
+            cursor.close();
+        }
+
+        return cityList;
+    }
+
+    public void saveCounty(County county){
+        if (county !=null){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("county_name",county.getCountyName());
+            contentValues.put("county_code",county.getCountyCode());
+            contentValues.put("city_id",county.getCityId());
+            db.insert("County", null, contentValues);
+        }
+    }
+
+    public List <County> loadCounties(int cityId){
+        List <County> countyList = new ArrayList<County>();
+        Cursor cursor = db.query("County",null,"city_id=?",new String[]{String.valueOf(cityId)},null,null,null);
+
+        if (cursor.moveToFirst()){
+            do {
+                County county = new County();
+                county.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
+                county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
+                county.setCityId(cursor.getInt(cursor.getColumnIndex("city_id")));
+                countyList.add(county);
+            }while(cursor.moveToNext());
+        }
+
+        if (cursor!= null){
+            cursor.close();
+        }
+
+        return countyList;
+    }
 }

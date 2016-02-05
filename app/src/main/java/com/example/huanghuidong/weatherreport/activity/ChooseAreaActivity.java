@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,6 +54,8 @@ public class ChooseAreaActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_area);
 
+//        Log.d("onCreate","oncreate");
+
         lv_area=(ListView)findViewById(R.id.lv_Area);
         tv_title=(TextView)findViewById(R.id.tvTitle);
 
@@ -67,20 +70,26 @@ public class ChooseAreaActivity extends Activity {
                 switch (currentLevel){
                     case LEVEL_PROVINCE:
                         selectedProvince = provinceList.get(position);
+                        Log.d("LV Prov Item ", selectedProvince.toString());
                         queryCities();
                         break;
                     case LEVEL_CITY:
                         selectedCity = cityList.get(position);
+//                        Log.d("LV City Item ", selectedCity.toString());
                         queryCounties();
                         break;
                 }
             }
         });
+
         queryProvinces();
     }
 
     private void queryProvinces(){
         provinceList = weatherReportDB.loadProvinces();
+
+//        Log.d("QueryProvinces",provinceList.toString());
+
         if (provinceList.size()>0){
             dataList.clear();
             for (Province province: provinceList){
@@ -98,6 +107,7 @@ public class ChooseAreaActivity extends Activity {
     private void queryCities(){
         cityList =weatherReportDB.loadCities(selectedProvince.getId());
         //where to set selectedProvince?
+//        Log.d("QueryCities",cityList.toString());
 
         if(cityList.size()>0){
             dataList.clear();
@@ -115,6 +125,7 @@ public class ChooseAreaActivity extends Activity {
 
     private void queryCounties(){
         countyList = weatherReportDB.loadCounties(selectedCity.getId());
+        Log.d("QueryCounties",countyList.toString());
 
         if (countyList.size()>0){
             dataList.clear();
@@ -133,16 +144,20 @@ public class ChooseAreaActivity extends Activity {
         String address;
 
         if(TextUtils.isEmpty(code)){
-            address="http://www.weather.com.cn/data/list3/city"+code+".xml";
-        }else{
             address="http://www.weather.com.cn/data/list3/city.xml";
+        }else{
+            address="http://www.weather.com.cn/data/list3/city"+code+".xml";
         }
 
+        Log.d("queryServer",address);
+
         showProgressDialog();
+
         HttpUtil.sendHttpRequest(address, new HttpCallBackListener() {
+
             @Override
             public void onFinish(String response) {
-
+//                Log.d("qFromS.onFinish resp=", response);
                 boolean result =false;
                 if("province".equals(type)){
                     result = Utility.handleProvincesResponse(weatherReportDB,response);
