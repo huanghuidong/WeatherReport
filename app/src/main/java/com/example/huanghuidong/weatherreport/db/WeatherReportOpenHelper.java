@@ -28,11 +28,14 @@ public class WeatherReportOpenHelper extends SQLiteOpenHelper {
 
     public WeatherReportOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
+
+
     }
 
     @Override
     // 执行db.getWritableDatabase()方法时执行此Oncreate()
     public void onCreate(SQLiteDatabase db) {
+
         db.execSQL(CREATE_PROVINCE);
         db.execSQL(CREATE_CITY);
         db.execSQL(CREATE_COUNTY);
@@ -42,14 +45,14 @@ public class WeatherReportOpenHelper extends SQLiteOpenHelper {
 //    实例化对象的时候判断版本号，如果newVersion比现有版本高，则会执行此upgrade方法
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         switch (oldVersion){
-            case 0:           //oldVersion=0，表示原来没有，重新建立DB
-                db.execSQL("drop table if exists Province");
-                db.execSQL("drop table if exists City");
-                db.execSQL("drop table if exists County");
-                break;
-//            case 1:         //oldVersion=1，表示原来版本是1，改变一个字段即可
-//                db.execSQL("alter table City add column Remark text");
-            default:
+//            case 0:           //oldVersion=0，表示原来没有，重新建立DB
+//                db.execSQL("drop table if exists Province");
+//                db.execSQL("drop table if exists City");
+//                db.execSQL("drop table if exists County");
+//                break;
+////            case 1:         //oldVersion=1，表示原来版本是1，改变一个字段即可
+////                db.execSQL("alter table City add column Remark text");
+//            default:
 
         }
     }

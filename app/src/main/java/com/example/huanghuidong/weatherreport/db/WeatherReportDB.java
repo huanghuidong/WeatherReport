@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.huanghuidong.weatherreport.model.City;
 import com.example.huanghuidong.weatherreport.model.County;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class WeatherReportDB {
     public static final String DB_NAME="WeatherReport";
-    public static final int CURRENT_VERSION = 3;
+    public static final int CURRENT_VERSION = 1;
     private static WeatherReportDB weatherReportDB;
     private SQLiteDatabase db;
 
@@ -78,8 +79,8 @@ public class WeatherReportDB {
         Cursor cursor = db.query("City",null,"province_id=?",new String[]{String.valueOf(provinceId)},null,null,null);
 
         if (cursor.moveToFirst()){
-            City city = new City();
             do {
+                City city = new City(); //这句如果放在Do循环外 ，会导致每次更新city,数组cityList内部也全部变化。
                 city.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
                 city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
